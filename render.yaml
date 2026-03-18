@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: oaa-aviation-analysis-suite
+    runtime: static
+    buildCommand: cd dash && npm install --legacy-peer-deps && npm run build
+    staticPublishPath: ./dash/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
