@@ -13,7 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showDemo, setShowDemo] = useState(true);
+  const [showDemo, setShowDemo] = useState(false);
   const { login, error, user } = useAuth();
   const navigate = useNavigate();
 
