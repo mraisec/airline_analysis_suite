@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   TrendingUp,
@@ -12,7 +12,9 @@ import {
   X,
   ChevronRight,
   Shield,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -27,6 +29,16 @@ const navItems = [
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, logout, hasAccess, getPermissions } = useAuth();
+  const navigate = useNavigate();
+  const perms = getPermissions();
+
+  const visibleNav = navItems.filter(item => hasAccess(item.to));
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -67,7 +79,7 @@ export default function Layout() {
 
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {navItems.map(({ to, label, icon: Icon }) => (
+          {visibleNav.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -86,8 +98,30 @@ export default function Layout() {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="px-3 py-4 border-t border-slate-700/50">
+        {/* User & Footer */}
+        <div className="px-3 py-4 border-t border-slate-700/50 space-y-2">
+          {user && sidebarOpen && (
+            <div className="px-3 py-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center text-xs font-bold text-sky-400 shrink-0">
+                  {user.avatar}
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-xs font-semibold text-white truncate">{user.name}</p>
+                  <p className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full inline-block mt-0.5 ${perms?.color || 'bg-slate-700 text-slate-300'}`}>
+                    {perms?.label || user.role}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          {user && !sidebarOpen && (
+            <div className="flex justify-center py-1">
+              <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center text-xs font-bold text-sky-400" title={user.name}>
+                {user.avatar}
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-3 px-3 py-2">
             <Shield className="w-4 h-4 text-emerald-400 shrink-0" />
             {sidebarOpen && (
@@ -96,6 +130,13 @@ export default function Layout() {
               </span>
             )}
           </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full px-3 py-2 text-xs text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            <LogOut className="w-4 h-4 shrink-0" />
+            {sidebarOpen && <span>Sign Out</span>}
+          </button>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="hidden lg:flex items-center gap-2 w-full px-3 py-2 text-xs text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
@@ -127,9 +168,16 @@ export default function Layout() {
             <span className="text-xs text-slate-500">
               Data through: Mar 2025
             </span>
-            <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">
-              OA
-            </div>
+            {user && (
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${perms?.color || 'bg-slate-100 text-slate-600'}`}>
+                  {perms?.label || user.role}
+                </span>
+                <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs font-bold">
+                  {user.avatar}
+                </div>
+              </div>
+            )}
           </div>
         </header>
 

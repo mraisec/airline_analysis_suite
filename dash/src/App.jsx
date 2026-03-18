@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import TrafficMarkets from './pages/TrafficMarkets';
 import FleetIntelligence from './pages/FleetIntelligence';
@@ -11,17 +14,20 @@ import AiInsights from './pages/AiInsights';
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/traffic" element={<TrafficMarkets />} />
-          <Route path="/fleet" element={<FleetIntelligence />} />
-          <Route path="/schedules" element={<ScheduleExplorer />} />
-          <Route path="/regulatory" element={<Regulatory />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/ai-insights" element={<AiInsights />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route element={<ProtectedRoute path="/"><Layout /></ProtectedRoute>}>
+            <Route path="/" element={<ProtectedRoute path="/"><Dashboard /></ProtectedRoute>} />
+            <Route path="/traffic" element={<ProtectedRoute path="/traffic"><TrafficMarkets /></ProtectedRoute>} />
+            <Route path="/fleet" element={<ProtectedRoute path="/fleet"><FleetIntelligence /></ProtectedRoute>} />
+            <Route path="/schedules" element={<ProtectedRoute path="/schedules"><ScheduleExplorer /></ProtectedRoute>} />
+            <Route path="/regulatory" element={<ProtectedRoute path="/regulatory"><Regulatory /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute path="/reports"><Reports /></ProtectedRoute>} />
+            <Route path="/ai-insights" element={<ProtectedRoute path="/ai-insights"><AiInsights /></ProtectedRoute>} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
