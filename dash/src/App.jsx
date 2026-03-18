@@ -10,6 +10,10 @@ import ScheduleExplorer from './pages/ScheduleExplorer';
 import Regulatory from './pages/Regulatory';
 import Reports from './pages/Reports';
 import AiInsights from './pages/AiInsights';
+import RouteMap from './pages/RouteMap';
+import DataPipelines from './pages/DataPipelines';
+import UserManagement from './pages/UserManagement';
+import SystemSettings from './pages/SystemSettings';
 
 function App() {
   return (
@@ -22,9 +26,13 @@ function App() {
             <Route path="/traffic" element={<ProtectedRoute path="/traffic"><TrafficMarkets /></ProtectedRoute>} />
             <Route path="/fleet" element={<ProtectedRoute path="/fleet"><FleetIntelligence /></ProtectedRoute>} />
             <Route path="/schedules" element={<ProtectedRoute path="/schedules"><ScheduleExplorer /></ProtectedRoute>} />
+            <Route path="/route-map" element={<ProtectedRoute path="/route-map"><RouteMap /></ProtectedRoute>} />
             <Route path="/regulatory" element={<ProtectedRoute path="/regulatory"><Regulatory /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute path="/reports"><Reports /></ProtectedRoute>} />
             <Route path="/ai-insights" element={<ProtectedRoute path="/ai-insights"><AiInsights /></ProtectedRoute>} />
+            <Route path="/data-pipelines" element={<ProtectedRoute path="/data-pipelines"><DataPipelines /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute path="/admin/users"><UserManagement /></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute path="/admin/settings"><SystemSettings /></ProtectedRoute>} />
           </Route>
         </Routes>
       </AuthProvider>

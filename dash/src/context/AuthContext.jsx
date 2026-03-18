@@ -38,7 +38,7 @@ const ROLE_PERMISSIONS = {
   admin: {
     label: 'Administrator',
     color: 'bg-purple-100 text-purple-700',
-    pages: ['/', '/traffic', '/fleet', '/schedules', '/regulatory', '/reports', '/ai-insights'],
+    pages: ['/', '/traffic', '/fleet', '/schedules', '/route-map', '/regulatory', '/reports', '/ai-insights', '/data-pipelines', '/admin/users', '/admin/settings'],
     canExport: true,
     canManageUsers: true,
     canViewMergers: true,
@@ -47,7 +47,7 @@ const ROLE_PERMISSIONS = {
   senior_analyst: {
     label: 'Senior Analyst',
     color: 'bg-sky-100 text-sky-700',
-    pages: ['/', '/traffic', '/fleet', '/schedules', '/regulatory', '/reports', '/ai-insights'],
+    pages: ['/', '/traffic', '/fleet', '/schedules', '/route-map', '/regulatory', '/reports', '/ai-insights', '/data-pipelines'],
     canExport: true,
     canManageUsers: false,
     canViewMergers: true,
@@ -56,7 +56,7 @@ const ROLE_PERMISSIONS = {
   analyst: {
     label: 'Analyst',
     color: 'bg-emerald-100 text-emerald-700',
-    pages: ['/', '/traffic', '/fleet', '/schedules', '/reports'],
+    pages: ['/', '/traffic', '/fleet', '/schedules', '/route-map', '/reports'],
     canExport: true,
     canManageUsers: false,
     canViewMergers: false,

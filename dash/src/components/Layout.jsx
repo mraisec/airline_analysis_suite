@@ -13,18 +13,43 @@ import {
   ChevronRight,
   Shield,
   LogOut,
+  Map,
+  Database,
+  Users,
+  Settings,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/traffic', label: 'Traffic & Markets', icon: TrendingUp },
-  { to: '/fleet', label: 'Fleet Intelligence', icon: Plane },
-  { to: '/schedules', label: 'Schedule Explorer', icon: CalendarClock },
-  { to: '/regulatory', label: 'Regulatory & Mergers', icon: Scale },
-  { to: '/reports', label: 'Reports & Export', icon: FileDown },
-  { to: '/ai-insights', label: 'AI Insights', icon: BrainCircuit },
+const navSections = [
+  {
+    label: 'Analytics',
+    items: [
+      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+      { to: '/traffic', label: 'Traffic & Markets', icon: TrendingUp },
+      { to: '/fleet', label: 'Fleet Intelligence', icon: Plane },
+      { to: '/schedules', label: 'Schedule Explorer', icon: CalendarClock },
+      { to: '/route-map', label: 'Route Map', icon: Map },
+    ],
+  },
+  {
+    label: 'Intelligence',
+    items: [
+      { to: '/regulatory', label: 'Regulatory & Mergers', icon: Scale },
+      { to: '/ai-insights', label: 'AI Insights', icon: BrainCircuit },
+      { to: '/reports', label: 'Reports & Export', icon: FileDown },
+    ],
+  },
+  {
+    label: 'Administration',
+    items: [
+      { to: '/data-pipelines', label: 'Data Pipelines', icon: Database },
+      { to: '/admin/users', label: 'User Management', icon: Users },
+      { to: '/admin/settings', label: 'System Settings', icon: Settings },
+    ],
+  },
 ];
+
+const navItems = navSections.flatMap(s => s.items);
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -78,24 +103,38 @@ export default function Layout() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {visibleNav.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${isActive
-                  ? 'bg-sky-500/20 text-sky-400'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`
-              }
-            >
-              <Icon className="w-5 h-5 shrink-0" />
-              {sidebarOpen && <span>{label}</span>}
-            </NavLink>
-          ))}
+        <nav className="flex-1 py-4 px-3 overflow-y-auto">
+          {navSections.map((section) => {
+            const sectionItems = section.items.filter(item => hasAccess(item.to));
+            if (sectionItems.length === 0) return null;
+            return (
+              <div key={section.label} className="mb-4">
+                {sidebarOpen && (
+                  <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">{section.label}</p>
+                )}
+                {!sidebarOpen && <div className="mx-3 mb-2 border-t border-slate-700/50" />}
+                <div className="space-y-0.5">
+                  {sectionItems.map(({ to, label, icon: Icon }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      onClick={() => setMobileOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                        ${isActive
+                          ? 'bg-sky-500/20 text-sky-400'
+                          : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                        }`
+                      }
+                    >
+                      <Icon className="w-5 h-5 shrink-0" />
+                      {sidebarOpen && <span>{label}</span>}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </nav>
 
         {/* User & Footer */}

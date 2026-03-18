@@ -276,6 +276,158 @@ export const kpiSummary = {
   dataPointsProcessed: '2.8B',
 };
 
+// ─── Data Pipeline / ETL Jobs ───
+export const dataPipelines = [
+  {
+    id: 'pipe-001', name: 'T-100 Domestic Traffic', source: 'BTS / DOT', frequency: 'Monthly',
+    lastRun: '2025-03-01 02:15:00', nextRun: '2025-04-01 02:00:00', status: 'Completed',
+    recordsProcessed: 524_310, recordsFailed: 12, duration: '4m 32s',
+    stages: [
+      { name: 'Download', status: 'success', duration: '45s' },
+      { name: 'Validate Schema', status: 'success', duration: '12s' },
+      { name: 'Transform', status: 'success', duration: '2m 18s' },
+      { name: 'Load to DB', status: 'success', duration: '1m 05s' },
+      { name: 'QA Check', status: 'success', duration: '12s' },
+    ],
+    description: 'Monthly T-100 domestic segment traffic data from Bureau of Transportation Statistics. Includes passenger counts, departures, seats, freight tons, and mail tons by carrier, origin, and destination.',
+  },
+  {
+    id: 'pipe-002', name: 'T-100 International Traffic', source: 'BTS / DOT', frequency: 'Monthly',
+    lastRun: '2025-03-01 02:45:00', nextRun: '2025-04-01 02:30:00', status: 'Completed',
+    recordsProcessed: 312_847, recordsFailed: 5, duration: '3m 10s',
+    stages: [
+      { name: 'Download', status: 'success', duration: '38s' },
+      { name: 'Validate Schema', status: 'success', duration: '8s' },
+      { name: 'Transform', status: 'success', duration: '1m 42s' },
+      { name: 'Load to DB', status: 'success', duration: '35s' },
+      { name: 'QA Check', status: 'success', duration: '7s' },
+    ],
+    description: 'Monthly T-100 international segment traffic data. Covers all US carrier international operations and foreign carrier operations to/from the US.',
+  },
+  {
+    id: 'pipe-003', name: 'DB1B Fare Survey', source: 'BTS / DOT', frequency: 'Quarterly',
+    lastRun: '2025-02-15 03:00:00', nextRun: '2025-05-15 03:00:00', status: 'Completed',
+    recordsProcessed: 9_845_221, recordsFailed: 342, duration: '18m 45s',
+    stages: [
+      { name: 'Download', status: 'success', duration: '3m 12s' },
+      { name: 'Validate Schema', status: 'success', duration: '1m 05s' },
+      { name: 'Transform', status: 'success', duration: '8m 20s' },
+      { name: 'Load to DB', status: 'success', duration: '5m 02s' },
+      { name: 'QA Check', status: 'success', duration: '1m 06s' },
+    ],
+    description: '10% sample of all domestic airline tickets. Includes itinerary fare, number of passengers, distance, origin/destination, and operating/ticketing carriers. Core dataset for fare analysis.',
+  },
+  {
+    id: 'pipe-004', name: 'AOTP On-Time Performance', source: 'BTS / DOT', frequency: 'Monthly',
+    lastRun: '2025-03-05 01:00:00', nextRun: '2025-04-05 01:00:00', status: 'Running',
+    recordsProcessed: 412_000, recordsFailed: 0, duration: '—',
+    stages: [
+      { name: 'Download', status: 'success', duration: '52s' },
+      { name: 'Validate Schema', status: 'success', duration: '10s' },
+      { name: 'Transform', status: 'running', duration: '—' },
+      { name: 'Load to DB', status: 'pending', duration: '—' },
+      { name: 'QA Check', status: 'pending', duration: '—' },
+    ],
+    description: 'Airline on-time performance data including departure/arrival delays, cancellations, diversions, and causes of delay by carrier, flight number, origin, and destination.',
+  },
+  {
+    id: 'pipe-005', name: 'OAG Schedule Data', source: 'OAG / Cirium', frequency: 'Weekly',
+    lastRun: '2025-03-10 05:00:00', nextRun: '2025-03-17 05:00:00', status: 'Failed',
+    recordsProcessed: 0, recordsFailed: 0, duration: '0m 22s',
+    stages: [
+      { name: 'Download', status: 'failed', duration: '22s' },
+      { name: 'Validate Schema', status: 'skipped', duration: '—' },
+      { name: 'Transform', status: 'skipped', duration: '—' },
+      { name: 'Load to DB', status: 'skipped', duration: '—' },
+      { name: 'QA Check', status: 'skipped', duration: '—' },
+    ],
+    description: 'Global airline schedule data from OAG/Cirium. Includes planned frequencies, aircraft types, codeshares, and seasonal schedules. Used for schedule analysis and route planning.',
+  },
+];
+
+export const dataQualityMetrics = [
+  { dataset: 'T-100 Domestic', completeness: 99.8, accuracy: 99.5, freshness: 'Current', lastCheck: '2025-03-01', issues: 0 },
+  { dataset: 'T-100 International', completeness: 99.6, accuracy: 99.2, freshness: 'Current', lastCheck: '2025-03-01', issues: 1 },
+  { dataset: 'DB1B Fare Survey', completeness: 98.9, accuracy: 98.7, freshness: 'Current', lastCheck: '2025-02-15', issues: 3 },
+  { dataset: 'AOTP On-Time', completeness: 99.4, accuracy: 99.1, freshness: 'Processing', lastCheck: '2025-03-05', issues: 0 },
+  { dataset: 'OAG Schedules', completeness: 97.2, accuracy: 98.8, freshness: 'Stale (7d)', lastCheck: '2025-03-03', issues: 2 },
+  { dataset: 'Fleet Registry', completeness: 99.9, accuracy: 99.7, freshness: 'Current', lastCheck: '2025-03-10', issues: 0 },
+];
+
+// ─── User Management Data ───
+export const userAccounts = [
+  { id: 1, name: 'Robin Golden', email: 'admin@oaa.dot.gov', role: 'admin', title: 'System Administrator', status: 'Active', lastLogin: '2025-03-18 09:15:00', loginCount: 342, department: 'IT Operations' },
+  { id: 2, name: 'Sarah Mitchell', email: 'senior.analyst@oaa.dot.gov', role: 'senior_analyst', title: 'Senior Aviation Analyst', status: 'Active', lastLogin: '2025-03-18 08:30:00', loginCount: 567, department: 'Aviation Analysis' },
+  { id: 3, name: 'James Carter', email: 'analyst@oaa.dot.gov', role: 'analyst', title: 'Aviation Analyst', status: 'Active', lastLogin: '2025-03-17 14:22:00', loginCount: 189, department: 'Aviation Analysis' },
+  { id: 4, name: 'Maria Lopez', email: 'maria.lopez@oaa.dot.gov', role: 'senior_analyst', title: 'Lead Market Analyst', status: 'Active', lastLogin: '2025-03-18 07:45:00', loginCount: 423, department: 'Market Analysis' },
+  { id: 5, name: 'David Chen', email: 'david.chen@oaa.dot.gov', role: 'analyst', title: 'Data Analyst', status: 'Active', lastLogin: '2025-03-15 16:10:00', loginCount: 98, department: 'Data Services' },
+  { id: 6, name: 'Emily Watson', email: 'emily.watson@oaa.dot.gov', role: 'analyst', title: 'Regulatory Analyst', status: 'Inactive', lastLogin: '2025-01-20 11:30:00', loginCount: 45, department: 'Regulatory Affairs' },
+  { id: 7, name: 'Robert Kim', email: 'robert.kim@oaa.dot.gov', role: 'senior_analyst', title: 'Senior Economist', status: 'Active', lastLogin: '2025-03-16 09:00:00', loginCount: 312, department: 'Economics Division' },
+  { id: 8, name: 'Lisa Park', email: 'lisa.park@oaa.dot.gov', role: 'analyst', title: 'Junior Analyst', status: 'Locked', lastLogin: '2025-02-28 13:45:00', loginCount: 23, department: 'Aviation Analysis' },
+];
+
+export const auditLog = [
+  { id: 1, user: 'Robin Golden', action: 'User Created', target: 'lisa.park@oaa.dot.gov', timestamp: '2025-03-15 10:30:00', ip: '10.0.1.45', details: 'Created new analyst account' },
+  { id: 2, user: 'Sarah Mitchell', action: 'Report Exported', target: 'Q4 2024 Traffic Summary', timestamp: '2025-03-14 14:22:00', ip: '10.0.1.102', details: 'Exported as PDF' },
+  { id: 3, user: 'Robin Golden', action: 'Role Changed', target: 'david.chen@oaa.dot.gov', timestamp: '2025-03-13 09:15:00', ip: '10.0.1.45', details: 'Changed from viewer to analyst' },
+  { id: 4, user: 'James Carter', action: 'Data Queried', target: 'DB1B Fare Database', timestamp: '2025-03-12 11:45:00', ip: '10.0.1.78', details: 'NLP query: "Average fares JFK-LAX 2024"' },
+  { id: 5, user: 'System', action: 'Pipeline Failed', target: 'OAG Schedule Data', timestamp: '2025-03-10 05:00:22', ip: 'system', details: 'Download timeout - API rate limit exceeded' },
+  { id: 6, user: 'Maria Lopez', action: 'Login', target: 'Session Started', timestamp: '2025-03-18 07:45:00', ip: '10.0.1.115', details: 'MFA verified via authenticator app' },
+  { id: 7, user: 'Robin Golden', action: 'Account Locked', target: 'lisa.park@oaa.dot.gov', timestamp: '2025-03-01 08:00:00', ip: '10.0.1.45', details: '5 failed login attempts' },
+  { id: 8, user: 'Sarah Mitchell', action: 'Merger Analysis', target: 'JetBlue-Spirit Scenario', timestamp: '2025-03-08 15:30:00', ip: '10.0.1.102', details: 'Ran HHI simulation with 3 divestiture options' },
+  { id: 9, user: 'System', action: 'Pipeline Completed', target: 'T-100 Domestic Traffic', timestamp: '2025-03-01 02:19:32', ip: 'system', details: '524,310 records processed, 12 failed QA' },
+  { id: 10, user: 'David Chen', action: 'Data Exported', target: 'Fleet Registry', timestamp: '2025-03-09 10:12:00', ip: '10.0.1.88', details: 'Exported full fleet data as CSV (2,431 rows)' },
+];
+
+// ─── System Settings / Infrastructure Data ───
+export const systemServices = [
+  { name: 'API Gateway', status: 'Healthy', uptime: '99.97%', lastRestart: '2025-02-15', responseTime: '42ms', version: 'v3.2.1', cpu: 12, memory: 34 },
+  { name: 'PostgreSQL Primary', status: 'Healthy', uptime: '99.99%', lastRestart: '2025-01-20', responseTime: '8ms', version: '16.2', cpu: 28, memory: 62 },
+  { name: 'PostgreSQL Replica', status: 'Healthy', uptime: '99.98%', lastRestart: '2025-01-20', responseTime: '12ms', version: '16.2', cpu: 15, memory: 58 },
+  { name: 'Redis Cache', status: 'Healthy', uptime: '99.99%', lastRestart: '2025-03-01', responseTime: '1ms', version: '7.2.4', cpu: 5, memory: 42 },
+  { name: 'ML Inference Server', status: 'Warning', uptime: '98.50%', lastRestart: '2025-03-10', responseTime: '380ms', version: 'v1.4.0', cpu: 78, memory: 89 },
+  { name: 'Background Workers', status: 'Healthy', uptime: '99.90%', lastRestart: '2025-03-05', responseTime: '—', version: 'v3.2.1', cpu: 22, memory: 45 },
+];
+
+export const complianceChecks = [
+  { category: 'FedRAMP', check: 'Access Control (AC)', status: 'Compliant', lastAudit: '2025-02-01', nextAudit: '2025-08-01', notes: 'Role-based access control implemented' },
+  { category: 'FedRAMP', check: 'Audit & Accountability (AU)', status: 'Compliant', lastAudit: '2025-02-01', nextAudit: '2025-08-01', notes: 'Full audit trail with tamper detection' },
+  { category: 'FedRAMP', check: 'System & Comms Protection (SC)', status: 'Compliant', lastAudit: '2025-02-01', nextAudit: '2025-08-01', notes: 'TLS 1.3, AES-256 encryption at rest' },
+  { category: 'FedRAMP', check: 'Incident Response (IR)', status: 'Partial', lastAudit: '2025-02-01', nextAudit: '2025-05-01', notes: 'Runbook needs update for new ML services' },
+  { category: 'Section 508', check: 'WCAG 2.1 Level AA', status: 'In Progress', lastAudit: '2025-01-15', nextAudit: '2025-04-15', notes: 'Chart accessibility pending screen reader testing' },
+  { category: 'Section 508', check: 'Keyboard Navigation', status: 'Compliant', lastAudit: '2025-01-15', nextAudit: '2025-04-15', notes: 'All interactive elements keyboard accessible' },
+  { category: 'FISMA', check: 'Risk Assessment (RA)', status: 'Compliant', lastAudit: '2025-03-01', nextAudit: '2025-09-01', notes: 'Annual risk assessment completed' },
+  { category: 'FISMA', check: 'Contingency Planning (CP)', status: 'Compliant', lastAudit: '2025-03-01', nextAudit: '2025-09-01', notes: 'DR plan tested quarterly' },
+];
+
+export const backupHistory = [
+  { id: 1, type: 'Full Database', size: '248 GB', started: '2025-03-17 01:00:00', completed: '2025-03-17 02:45:00', status: 'Completed', retention: '90 days' },
+  { id: 2, type: 'Incremental', size: '12 GB', started: '2025-03-18 01:00:00', completed: '2025-03-18 01:18:00', status: 'Completed', retention: '30 days' },
+  { id: 3, type: 'Config & Secrets', size: '45 MB', started: '2025-03-18 00:30:00', completed: '2025-03-18 00:31:00', status: 'Completed', retention: '365 days' },
+  { id: 4, type: 'Full Database', size: '245 GB', started: '2025-03-10 01:00:00', completed: '2025-03-10 02:40:00', status: 'Completed', retention: '90 days' },
+  { id: 5, type: 'ML Model Artifacts', size: '8.2 GB', started: '2025-03-15 03:00:00', completed: '2025-03-15 03:12:00', status: 'Completed', retention: '180 days' },
+];
+
+// ─── Route Map Data ───
+export const routeMapData = airports.map((apt) => ({
+  ...apt,
+  totalDepartures: Math.round(200 + Math.random() * 800),
+  totalPax: Math.round(500_000 + Math.random() * 8_000_000),
+  carriers: Math.round(3 + Math.random() * 12),
+  destinations: Math.round(10 + Math.random() * 150),
+}));
+
+export const routeConnections = odMarkets.map((od) => {
+  const orig = airports.find(a => a.code === od.origin);
+  const dest = airports.find(a => a.code === od.dest);
+  return {
+    ...od,
+    origLat: orig?.lat, origLon: orig?.lon,
+    destLat: dest?.lat, destLon: dest?.lon,
+    type: (orig?.country !== 'US' || dest?.country !== 'US') ? 'International' : 'Domestic',
+  };
+});
+
 // ─── AI Insights ───
 export const aiInsights = [
   { id: 1, type: 'Trend', severity: 'info', title: 'Pacific Route Recovery', description: 'Trans-Pacific traffic has recovered to 94% of 2019 levels, with SFO-NRT showing strongest growth at 8.3% YoY.', date: '2025-03-15', category: 'Traffic' },
