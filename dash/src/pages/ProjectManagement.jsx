@@ -37,7 +37,28 @@ export default function ProjectManagement() {
   const totalTasks = allTasks.length;
   const criticalTasks = allTasks.filter(t => t.priority === 'Critical').length;
   const highRiskTasks = allTasks.filter(t => t.risk === 'High').length;
-  const totalWeeks = 14;
+
+  // Derive all timeline data from sprint dates — no hardcoded values
+  const projectStart = useMemo(() => new Date(Math.min(...projectSprints.map(s => new Date(s.startDate)))), []);
+  const projectEnd = useMemo(() => new Date(Math.max(...projectSprints.map(s => new Date(s.endDate)))), []);
+  const totalDays = Math.ceil((projectEnd - projectStart) / (1000 * 60 * 60 * 24));
+  const totalWeeks = Math.ceil(totalDays / 7);
+  const fmtDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const fmtShort = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  // Generate month markers dynamically from project date range
+  const monthMarkers = useMemo(() => {
+    const markers = [];
+    const cur = new Date(projectStart.getFullYear(), projectStart.getMonth(), 1);
+    const end = new Date(projectEnd.getFullYear(), projectEnd.getMonth() + 1, 1);
+    while (cur < end) {
+      const dayOffset = Math.max(0, (cur - projectStart) / (1000 * 60 * 60 * 24));
+      const weekOffset = dayOffset / 7;
+      markers.push({ label: `${cur.toLocaleDateString('en-US', { month: 'short' })} ${cur.getFullYear()}`, weekOffset });
+      cur.setMonth(cur.getMonth() + 1);
+    }
+    return markers;
+  }, [projectStart, projectEnd]);
 
   const sprintChart = projectSprints.map(s => ({
     name: s.id,
@@ -110,8 +131,8 @@ export default function ProjectManagement() {
           <p className="text-sm text-slate-500 mt-1">OAA Aviation Analysis Suite - Production Delivery Plan</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">14 Weeks</span>
-          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">7 Sprints</span>
+          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">{totalWeeks} Weeks</span>
+          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">{projectSprints.length} Sprints</span>
           <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">{totalPoints} Story Points</span>
         </div>
       </div>
@@ -119,8 +140,8 @@ export default function ProjectManagement() {
       {/* Executive KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
         {[
-          { label: 'Duration', value: '14 weeks', sub: 'Apr 7 - Jul 11, 2025', icon: CalendarDays, color: 'text-sky-600', bg: 'bg-sky-50' },
-          { label: 'Total Sprints', value: '7', sub: '2-week cycles', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+          { label: 'Duration', value: `${totalWeeks} weeks`, sub: `${fmtShort(projectStart)} - ${fmtDate(projectEnd)}`, icon: CalendarDays, color: 'text-sky-600', bg: 'bg-sky-50' },
+          { label: 'Total Sprints', value: `${projectSprints.length}`, sub: '2-week cycles', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
           { label: 'Story Points', value: totalPoints, sub: `${totalTasks} tasks`, icon: Target, color: 'text-violet-600', bg: 'bg-violet-50' },
           { label: 'Team Size', value: `${projectTeam.length}`, sub: `1 Architect (equity) + 2 FTE (1099)`, icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { label: 'Base Year', value: `$${(projectBudget.baseYear.total / 1000).toFixed(0)}K`, sub: `5-yr total: $${(projectBudget.fiveYear.total / 1000).toFixed(0)}K`, icon: DollarSign, color: 'text-amber-600', bg: 'bg-amber-50' },
@@ -313,14 +334,14 @@ export default function ProjectManagement() {
       {tab === 'gantt' && (
         <div className="space-y-4">
           <div className="bg-white rounded-xl border border-slate-200 p-5 overflow-x-auto">
-            <h3 className="text-sm font-semibold text-slate-700 mb-4">Visual Roadmap (Apr 2025 - Jul 2025)</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-4">Visual Roadmap ({projectStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {projectEnd.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })})</h3>
             <div className="min-w-[800px]">
               {/* Week headers */}
               <div className="flex items-center mb-2">
                 <div className="w-56 shrink-0" />
                 <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${totalWeeks}, 1fr)` }}>
                   {Array.from({ length: totalWeeks }, (_, i) => {
-                    const d = new Date(2025, 3, 7 + i * 7);
+                    const d = new Date(projectStart.getTime() + i * 7 * 24 * 60 * 60 * 1000);
                     return (
                       <div key={i} className="text-center text-[9px] text-slate-400 border-l border-slate-100 px-0.5">
                         {d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -334,14 +355,11 @@ export default function ProjectManagement() {
               <div className="flex items-center mb-1">
                 <div className="w-56 shrink-0" />
                 <div className="flex-1 relative h-4">
-                  {['Apr', 'May', 'Jun', 'Jul'].map((month, mi) => {
-                    const startWeek = [0, 3.4, 8, 12.6][mi];
-                    return (
-                      <div key={month} className="absolute text-[10px] font-bold text-slate-500" style={{ left: `${(startWeek / totalWeeks) * 100}%` }}>
-                        {month} 2025
-                      </div>
-                    );
-                  })}
+                  {monthMarkers.map((m) => (
+                    <div key={m.label} className="absolute text-[10px] font-bold text-slate-500" style={{ left: `${(m.weekOffset / totalWeeks) * 100}%` }}>
+                      {m.label}
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -350,12 +368,11 @@ export default function ProjectManagement() {
                 {projectSprints.map(sprint => {
                   const startDate = new Date(sprint.startDate);
                   const endDate = new Date(sprint.endDate);
-                  const projectStart = new Date(2025, 3, 7);
-                  const totalDays = totalWeeks * 7;
+                  const totalDaysGantt = totalDays;
                   const startOffset = (startDate - projectStart) / (1000 * 60 * 60 * 24);
                   const duration = (endDate - startDate) / (1000 * 60 * 60 * 24);
-                  const leftPct = (startOffset / totalDays) * 100;
-                  const widthPct = (duration / totalDays) * 100;
+                  const leftPct = (startOffset / totalDaysGantt) * 100;
+                  const widthPct = (duration / totalDaysGantt) * 100;
                   const phaseStyle = PHASE_COLORS[sprint.phase] || {};
                   const critCount = sprint.tasks.filter(t => t.priority === 'Critical').length;
 
