@@ -26,21 +26,39 @@ const PRIORITY_STYLES = {
 
 const RISK_COLORS = { Low: '#10b981', Medium: '#f59e0b', High: '#ef4444' };
 
+// Helper: shift a YYYY-MM-DD date string by N milliseconds and return new YYYY-MM-DD string
+const shiftDateStr = (dateStr, deltaMs) => {
+  const d = new Date(new Date(dateStr).getTime() + deltaMs);
+  return d.toISOString().slice(0, 10);
+};
+
 export default function ProjectManagement() {
   const [tab, setTab] = useState('timeline');
   const [expandedSprint, setExpandedSprint] = useState(null);
   const [expandedTask, setExpandedTask] = useState(null);
   const [riskFilter, setRiskFilter] = useState('All');
 
-  const allTasks = useMemo(() => projectSprints.flatMap(s => s.tasks.map(t => ({ ...t, sprintId: s.id, sprintName: s.name, phase: s.phase }))), []);
-  const totalPoints = projectSprints.reduce((s, sp) => s + sp.totalPoints, 0);
+  // Original earliest start date from data
+  const originalStart = useMemo(() => new Date(Math.min(...projectSprints.map(s => new Date(s.startDate)))), []);
+  const [kickoffDate, setKickoffDate] = useState(() => originalStart.toISOString().slice(0, 10));
+
+  // Compute delta and shift all sprint dates when kickoff changes
+  const deltaMs = useMemo(() => new Date(kickoffDate).getTime() - originalStart.getTime(), [kickoffDate, originalStart]);
+  const sprints = useMemo(() => projectSprints.map(s => ({
+    ...s,
+    startDate: shiftDateStr(s.startDate, deltaMs),
+    endDate: shiftDateStr(s.endDate, deltaMs),
+  })), [deltaMs]);
+
+  const allTasks = useMemo(() => sprints.flatMap(s => s.tasks.map(t => ({ ...t, sprintId: s.id, sprintName: s.name, phase: s.phase }))), [sprints]);
+  const totalPoints = sprints.reduce((s, sp) => s + sp.totalPoints, 0);
   const totalTasks = allTasks.length;
   const criticalTasks = allTasks.filter(t => t.priority === 'Critical').length;
   const highRiskTasks = allTasks.filter(t => t.risk === 'High').length;
 
   // Derive all timeline data from sprint dates — no hardcoded values
-  const projectStart = useMemo(() => new Date(Math.min(...projectSprints.map(s => new Date(s.startDate)))), []);
-  const projectEnd = useMemo(() => new Date(Math.max(...projectSprints.map(s => new Date(s.endDate)))), []);
+  const projectStart = useMemo(() => new Date(Math.min(...sprints.map(s => new Date(s.startDate)))), [sprints]);
+  const projectEnd = useMemo(() => new Date(Math.max(...sprints.map(s => new Date(s.endDate)))), [sprints]);
   const totalDays = Math.ceil((projectEnd - projectStart) / (1000 * 60 * 60 * 24));
   const totalWeeks = Math.ceil(totalDays / 7);
   const fmtDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -60,7 +78,7 @@ export default function ProjectManagement() {
     return markers;
   }, [projectStart, projectEnd]);
 
-  const sprintChart = projectSprints.map(s => ({
+  const sprintChart = sprints.map(s => ({
     name: s.id,
     points: s.totalPoints,
     phase: s.phase,
@@ -69,17 +87,17 @@ export default function ProjectManagement() {
 
   const phaseData = useMemo(() => {
     const map = {};
-    projectSprints.forEach(s => {
+    sprints.forEach(s => {
       if (!map[s.phase]) map[s.phase] = { name: s.phase, points: 0, tasks: 0, sprints: 0 };
       map[s.phase].points += s.totalPoints;
       map[s.phase].tasks += s.tasks.length;
       map[s.phase].sprints += 1;
     });
     return Object.values(map);
-  }, []);
+  }, [sprints]);
 
   const budgetChart = projectBudget.laborCost.map((lc, i) => ({
-    name: projectSprints[i]?.id || lc.sprint,
+    name: sprints[i]?.id || lc.sprint,
     labor: lc.cost,
     cumulative: projectBudget.laborCost.slice(0, i + 1).reduce((s, x) => s + x.cost, 0),
   }));
@@ -130,9 +148,24 @@ export default function ProjectManagement() {
           <h1 className="text-2xl font-bold text-slate-800">Project Management & Roadmap</h1>
           <p className="text-sm text-slate-500 mt-1">OAA Aviation Analysis Suite - Production Delivery Plan</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
+            <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
+            <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Kickoff</label>
+            <input
+              type="date"
+              value={kickoffDate}
+              onChange={e => setKickoffDate(e.target.value)}
+              className="text-xs font-semibold text-slate-700 border-0 bg-transparent outline-none cursor-pointer"
+            />
+            {deltaMs !== 0 && (
+              <button onClick={() => setKickoffDate(originalStart.toISOString().slice(0, 10))} className="text-[9px] font-semibold text-red-500 hover:text-red-700 ml-1" title="Reset to original date">
+                Reset
+              </button>
+            )}
+          </div>
           <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">{totalWeeks} Weeks</span>
-          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">{projectSprints.length} Sprints</span>
+          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">{sprints.length} Sprints</span>
           <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">{totalPoints} Story Points</span>
         </div>
       </div>
@@ -141,7 +174,7 @@ export default function ProjectManagement() {
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
         {[
           { label: 'Duration', value: `${totalWeeks} weeks`, sub: `${fmtShort(projectStart)} - ${fmtDate(projectEnd)}`, icon: CalendarDays, color: 'text-sky-600', bg: 'bg-sky-50' },
-          { label: 'Total Sprints', value: `${projectSprints.length}`, sub: '2-week cycles', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+          { label: 'Total Sprints', value: `${sprints.length}`, sub: '2-week cycles', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
           { label: 'Story Points', value: totalPoints, sub: `${totalTasks} tasks`, icon: Target, color: 'text-violet-600', bg: 'bg-violet-50' },
           { label: 'Team Size', value: `${projectTeam.length}`, sub: `1 Architect (equity) + 2 FTE (1099)`, icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { label: 'Base Year', value: `$${(projectBudget.baseYear.total / 1000).toFixed(0)}K`, sub: `5-yr total: $${(projectBudget.fiveYear.total / 1000).toFixed(0)}K`, icon: DollarSign, color: 'text-amber-600', bg: 'bg-amber-50' },
@@ -206,7 +239,7 @@ export default function ProjectManagement() {
           </div>
 
           {/* Sprint cards */}
-          {projectSprints.map(sprint => {
+          {sprints.map(sprint => {
             const isExpanded = expandedSprint === sprint.id;
             const phaseStyle = PHASE_COLORS[sprint.phase] || {};
             const critCount = sprint.tasks.filter(t => t.priority === 'Critical').length;
@@ -365,7 +398,7 @@ export default function ProjectManagement() {
 
               {/* Sprint bars */}
               <div className="space-y-1.5 mt-2">
-                {projectSprints.map(sprint => {
+                {sprints.map(sprint => {
                   const startDate = new Date(sprint.startDate);
                   const endDate = new Date(sprint.endDate);
                   const totalDaysGantt = totalDays;
