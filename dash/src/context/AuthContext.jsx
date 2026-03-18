@@ -38,7 +38,7 @@ const ROLE_PERMISSIONS = {
   admin: {
     label: 'Administrator',
     color: 'bg-purple-100 text-purple-700',
-    pages: ['/', '/traffic', '/fleet', '/schedules', '/route-map', '/regulatory', '/reports', '/ai-insights', '/data-pipelines', '/admin/users', '/admin/settings'],
+    pages: ['/', '/traffic', '/fleet', '/schedules', '/route-map', '/regulatory', '/reports', '/ai-insights', '/data-pipelines', '/admin/users', '/admin/settings', '/project-management'],
     canExport: true,
     canManageUsers: true,
     canViewMergers: true,

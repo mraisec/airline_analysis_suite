@@ -17,6 +17,7 @@ import {
   Database,
   Users,
   Settings,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -45,6 +46,7 @@ const navSections = [
       { to: '/data-pipelines', label: 'Data Pipelines', icon: Database },
       { to: '/admin/users', label: 'User Management', icon: Users },
       { to: '/admin/settings', label: 'System Settings', icon: Settings },
+      { to: '/project-management', label: 'Project Management', icon: ClipboardList },
     ],
   },
 ];

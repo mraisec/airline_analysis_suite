@@ -14,6 +14,7 @@ import RouteMap from './pages/RouteMap';
 import DataPipelines from './pages/DataPipelines';
 import UserManagement from './pages/UserManagement';
 import SystemSettings from './pages/SystemSettings';
+import ProjectManagement from './pages/ProjectManagement';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/data-pipelines" element={<ProtectedRoute path="/data-pipelines"><DataPipelines /></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute path="/admin/users"><UserManagement /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute path="/admin/settings"><SystemSettings /></ProtectedRoute>} />
+            <Route path="/project-management" element={<ProtectedRoute path="/project-management"><ProjectManagement /></ProtectedRoute>} />
           </Route>
         </Routes>
       </AuthProvider>
