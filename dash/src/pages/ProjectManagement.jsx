@@ -12,10 +12,9 @@ import {
 const PHASE_COLORS = {
   'P0 - Foundation': { bg: 'bg-red-500', light: 'bg-red-100 text-red-700', bar: '#ef4444' },
   'P0 - Data Ingestion': { bg: 'bg-orange-500', light: 'bg-orange-100 text-orange-700', bar: '#f97316' },
-  'P1 - Core Features': { bg: 'bg-sky-500', light: 'bg-sky-100 text-sky-700', bar: '#0ea5e9' },
-  'P2 - Advanced Features': { bg: 'bg-violet-500', light: 'bg-violet-100 text-violet-700', bar: '#8b5cf6' },
-  'P3 - Compliance': { bg: 'bg-emerald-500', light: 'bg-emerald-100 text-emerald-700', bar: '#10b981' },
-  'P3 - Quality Assurance': { bg: 'bg-teal-500', light: 'bg-teal-100 text-teal-700', bar: '#14b8a6' },
+  'P1 - Core Analytics': { bg: 'bg-sky-500', light: 'bg-sky-100 text-sky-700', bar: '#0ea5e9' },
+  'P1 - AI Integration': { bg: 'bg-violet-500', light: 'bg-violet-100 text-violet-700', bar: '#8b5cf6' },
+  'P2 - Delivery': { bg: 'bg-emerald-500', light: 'bg-emerald-100 text-emerald-700', bar: '#10b981' },
 };
 
 const PRIORITY_STYLES = {
@@ -38,7 +37,7 @@ export default function ProjectManagement() {
   const totalTasks = allTasks.length;
   const criticalTasks = allTasks.filter(t => t.priority === 'Critical').length;
   const highRiskTasks = allTasks.filter(t => t.risk === 'High').length;
-  const totalWeeks = 20;
+  const totalWeeks = 14;
 
   const sprintChart = projectSprints.map(s => ({
     name: s.id,
@@ -111,8 +110,8 @@ export default function ProjectManagement() {
           <p className="text-sm text-slate-500 mt-1">OAA Aviation Analysis Suite - Production Delivery Plan</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">20 Weeks</span>
-          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">10 Sprints</span>
+          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">14 Weeks</span>
+          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">7 Sprints</span>
           <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">{totalPoints} Story Points</span>
         </div>
       </div>
@@ -120,11 +119,11 @@ export default function ProjectManagement() {
       {/* Executive KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
         {[
-          { label: 'Duration', value: '20 weeks', sub: 'Apr 7 - Aug 22, 2025', icon: CalendarDays, color: 'text-sky-600', bg: 'bg-sky-50' },
-          { label: 'Total Sprints', value: '10', sub: '2-week cycles', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+          { label: 'Duration', value: '14 weeks', sub: 'Apr 7 - Jul 11, 2025', icon: CalendarDays, color: 'text-sky-600', bg: 'bg-sky-50' },
+          { label: 'Total Sprints', value: '7', sub: '2-week cycles', icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50' },
           { label: 'Story Points', value: totalPoints, sub: `${totalTasks} tasks`, icon: Target, color: 'text-violet-600', bg: 'bg-violet-50' },
-          { label: 'Team Size', value: `${projectTeam.length}`, sub: `${projectTeam.filter(t => t.type === 'FTE').length} FTE, ${projectTeam.filter(t => t.type === 'Contractor').length} contractors`, icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Total Budget', value: `$${(projectBudget.grandTotal / 1000).toFixed(0)}K`, sub: 'Labor + infra + contingency', icon: DollarSign, color: 'text-amber-600', bg: 'bg-amber-50' },
+          { label: 'Team Size', value: `${projectTeam.length}`, sub: `1 Architect (equity) + 2 FTE (1099)`, icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Base Year', value: `$${(projectBudget.baseYear.total / 1000).toFixed(0)}K`, sub: `5-yr total: $${(projectBudget.fiveYear.total / 1000).toFixed(0)}K`, icon: DollarSign, color: 'text-amber-600', bg: 'bg-amber-50' },
           { label: 'Risk Items', value: projectRisks.length, sub: `${projectRisks.filter(r => r.score >= 6).length} high/critical`, icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' },
         ].map(kpi => (
           <div key={kpi.label} className={`${kpi.bg} rounded-xl p-4 border border-white`}>
@@ -314,7 +313,7 @@ export default function ProjectManagement() {
       {tab === 'gantt' && (
         <div className="space-y-4">
           <div className="bg-white rounded-xl border border-slate-200 p-5 overflow-x-auto">
-            <h3 className="text-sm font-semibold text-slate-700 mb-4">Visual Roadmap (Apr 2025 - Aug 2025)</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-4">Visual Roadmap (Apr 2025 - Jul 2025)</h3>
             <div className="min-w-[800px]">
               {/* Week headers */}
               <div className="flex items-center mb-2">
@@ -335,8 +334,8 @@ export default function ProjectManagement() {
               <div className="flex items-center mb-1">
                 <div className="w-56 shrink-0" />
                 <div className="flex-1 relative h-4">
-                  {['Apr', 'May', 'Jun', 'Jul', 'Aug'].map((month, mi) => {
-                    const startWeek = [0, 3.4, 8, 12.6, 17.3][mi];
+                  {['Apr', 'May', 'Jun', 'Jul'].map((month, mi) => {
+                    const startWeek = [0, 3.4, 8, 12.6][mi];
                     return (
                       <div key={month} className="absolute text-[10px] font-bold text-slate-500" style={{ left: `${(startWeek / totalWeeks) * 100}%` }}>
                         {month} 2025
@@ -503,7 +502,7 @@ export default function ProjectManagement() {
           {/* Filter */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">Filter by category:</span>
-            {['All', 'External Dependency', 'Procurement', 'Technical', 'Compliance'].map(cat => (
+            {['All', 'Technical', 'External Dependency', 'Financial', 'Operational', 'Adoption'].map(cat => (
               <button key={cat} onClick={() => setRiskFilter(cat)} className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${riskFilter === cat ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
                 {cat}
               </button>
@@ -603,9 +602,12 @@ export default function ProjectManagement() {
                     <span key={s} className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">{s}</span>
                   ))}
                 </div>
+                {member.responsibilities && (
+                  <p className="text-[10px] text-slate-500 mt-2 leading-relaxed border-t border-slate-100 pt-2">{member.responsibilities.split('.')[0]}.</p>
+                )}
                 <div className="mt-2 flex items-center justify-between text-[10px]">
-                  <span className="text-slate-400">Hourly Rate</span>
-                  <span className="font-bold text-slate-600">${member.rate}/hr</span>
+                  <span className="text-slate-400">{member.rate > 0 ? 'Annual Comp' : 'Cost'}</span>
+                  <span className="font-bold text-slate-600">{member.rate > 0 ? `$${(member.rate * 2080).toLocaleString()}/yr` : 'Equity (unbilled)'}</span>
                 </div>
               </div>
             ))}
@@ -616,28 +618,92 @@ export default function ProjectManagement() {
       {/* ═══════════ TAB: Budget & Cost ═══════════ */}
       {tab === 'budget' && (
         <div className="space-y-4">
-          {/* Budget summary cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Budget summary cards - per Technical Proposal Section 8 */}
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <div className="bg-sky-50 rounded-xl p-4 border border-sky-100">
-              <p className="text-[10px] font-semibold text-sky-500 uppercase">Total Labor</p>
-              <p className="text-2xl font-bold text-sky-600 mt-1">${(projectBudget.totalLaborCost / 1000).toFixed(0)}K</p>
-              <p className="text-[10px] text-sky-400 mt-0.5">10 sprints × 12 resources</p>
+              <p className="text-[10px] font-semibold text-sky-500 uppercase">Labor (1099)</p>
+              <p className="text-2xl font-bold text-sky-600 mt-1">${(projectBudget.baseYear.laborTotal / 1000).toFixed(0)}K</p>
+              <p className="text-[10px] text-sky-400 mt-0.5">2 FTE + 1 Architect (equity)</p>
             </div>
             <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
-              <p className="text-[10px] font-semibold text-indigo-500 uppercase">Annual Infrastructure</p>
-              <p className="text-2xl font-bold text-indigo-600 mt-1">${(projectBudget.totalInfraCostAnnual / 1000).toFixed(0)}K</p>
-              <p className="text-[10px] text-indigo-400 mt-0.5">{projectBudget.infrastructure.length} services/licenses</p>
+              <p className="text-[10px] font-semibold text-indigo-500 uppercase">Cloud Infrastructure</p>
+              <p className="text-2xl font-bold text-indigo-600 mt-1">${(projectBudget.baseYear.cloudInfrastructure / 1000).toFixed(0)}K</p>
+              <p className="text-[10px] text-indigo-400 mt-0.5">Secure commercial cloud hosting</p>
             </div>
             <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-              <p className="text-[10px] font-semibold text-amber-500 uppercase">Contingency (15%)</p>
-              <p className="text-2xl font-bold text-amber-600 mt-1">${(projectBudget.contingency / 1000).toFixed(0)}K</p>
-              <p className="text-[10px] text-amber-400 mt-0.5">Buffer for risks & scope changes</p>
+              <p className="text-[10px] font-semibold text-amber-500 uppercase">Risk Reserve</p>
+              <p className="text-2xl font-bold text-amber-600 mt-1">${(projectBudget.baseYear.engineeringRiskReserve / 1000).toFixed(0)}K</p>
+              <p className="text-[10px] text-amber-400 mt-0.5">Engineering risk buffer</p>
+            </div>
+            <div className="bg-violet-50 rounded-xl p-4 border border-violet-100">
+              <p className="text-[10px] font-semibold text-violet-500 uppercase">Base Year Total</p>
+              <p className="text-2xl font-bold text-violet-600 mt-1">${(projectBudget.baseYear.total / 1000).toFixed(0)}K</p>
+              <p className="text-[10px] text-violet-400 mt-0.5">RFP No. 693JK426R600002</p>
             </div>
             <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-              <p className="text-[10px] font-semibold text-emerald-500 uppercase">Grand Total (Year 1)</p>
-              <p className="text-2xl font-bold text-emerald-600 mt-1">${(projectBudget.grandTotal / 1000).toFixed(0)}K</p>
-              <p className="text-[10px] text-emerald-400 mt-0.5">Labor + infra + contingency</p>
+              <p className="text-[10px] font-semibold text-emerald-500 uppercase">5-Year Total</p>
+              <p className="text-2xl font-bold text-emerald-600 mt-1">${(projectBudget.fiveYear.total / 1000000).toFixed(2)}M</p>
+              <p className="text-[10px] text-emerald-400 mt-0.5">Base + 4 option years @ ${(projectBudget.optionYear.total / 1000).toFixed(0)}K/yr</p>
             </div>
+          </div>
+
+          {/* Base Year Cost Breakdown Table */}
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
+              <h3 className="text-sm font-semibold text-slate-700">Base Year Technical Pricing (Per Technical Proposal Section 8)</h3>
+            </div>
+            <table className="w-full text-xs">
+              <tbody>
+                <tr className="border-b border-slate-100"><td className="px-5 py-2.5 text-slate-500 uppercase text-[10px] font-bold" colSpan={2}>Labor (1099)</td></tr>
+                {projectBudget.baseYear.labor.map((l, i) => (
+                  <tr key={i} className="border-b border-slate-50 hover:bg-slate-50">
+                    <td className="px-5 py-2.5 pl-10 text-slate-700 font-medium">{l.role}</td>
+                    <td className="px-5 py-2.5 text-right font-semibold text-slate-700">${l.annual.toLocaleString()}</td>
+                  </tr>
+                ))}
+                <tr className="border-b border-slate-200 bg-sky-50"><td className="px-5 py-2.5 font-bold text-sky-700">Labor Total</td><td className="px-5 py-2.5 text-right font-bold text-sky-700">${projectBudget.baseYear.laborTotal.toLocaleString()}</td></tr>
+                <tr className="border-b border-slate-100 hover:bg-slate-50"><td className="px-5 py-2.5 text-slate-700 font-medium">Cloud Infrastructure</td><td className="px-5 py-2.5 text-right font-semibold text-slate-700">${projectBudget.baseYear.cloudInfrastructure.toLocaleString()}</td></tr>
+                <tr className="border-b border-slate-100 hover:bg-slate-50"><td className="px-5 py-2.5 text-slate-700 font-medium">Security & Monitoring Tools</td><td className="px-5 py-2.5 text-right font-semibold text-slate-700">${projectBudget.baseYear.securityMonitoring.toLocaleString()}</td></tr>
+                <tr className="border-b border-slate-100 hover:bg-slate-50"><td className="px-5 py-2.5 text-slate-700 font-medium">Training & Support Systems</td><td className="px-5 py-2.5 text-right font-semibold text-slate-700">${projectBudget.baseYear.trainingSupport.toLocaleString()}</td></tr>
+                <tr className="border-b border-slate-200 bg-slate-50"><td className="px-5 py-2.5 font-bold text-slate-700">Subtotal Technical Delivery</td><td className="px-5 py-2.5 text-right font-bold text-slate-700">${projectBudget.baseYear.subtechnicalDelivery.toLocaleString()}</td></tr>
+                <tr className="border-b border-slate-100 hover:bg-slate-50"><td className="px-5 py-2.5 text-slate-700 font-medium">Engineering Risk Reserve</td><td className="px-5 py-2.5 text-right font-semibold text-amber-600">${projectBudget.baseYear.engineeringRiskReserve.toLocaleString()}</td></tr>
+                <tr className="border-b border-slate-100 hover:bg-slate-50"><td className="px-5 py-2.5 text-slate-700 font-medium">Platform Sustainment Margin</td><td className="px-5 py-2.5 text-right font-semibold text-slate-700">${projectBudget.baseYear.platformSustainmentMargin.toLocaleString()}</td></tr>
+                <tr className="bg-indigo-50 border-t-2 border-indigo-200"><td className="px-5 py-3 font-bold text-indigo-800 text-sm">FINAL BASE YEAR TECHNICAL PRICE</td><td className="px-5 py-3 text-right font-bold text-indigo-800 text-sm">${projectBudget.baseYear.total.toLocaleString()}</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* 5-Year Cost Summary */}
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
+              <h3 className="text-sm font-semibold text-slate-700">5-Year Technical Total</h3>
+            </div>
+            <table className="w-full text-xs">
+              <thead><tr className="text-slate-500 bg-slate-50"><th className="text-left px-5 py-2.5 font-semibold">Period</th><th className="text-right px-5 py-2.5 font-semibold">Amount</th></tr></thead>
+              <tbody>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 font-semibold text-slate-700">Base Year</td><td className="px-5 py-3 text-right font-bold text-slate-700">${projectBudget.fiveYear.baseYear.toLocaleString()}</td></tr>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 font-semibold text-slate-700">4 Option Years (@ ${projectBudget.optionYear.total.toLocaleString()}/yr)</td><td className="px-5 py-3 text-right font-bold text-slate-700">${projectBudget.fiveYear.optionYears.toLocaleString()}</td></tr>
+                <tr className="bg-emerald-50 border-t-2 border-emerald-200"><td className="px-5 py-3 font-bold text-emerald-800 text-sm">TOTAL TECHNICAL PORTION (5 Years)</td><td className="px-5 py-3 text-right font-bold text-emerald-800 text-sm">${projectBudget.fiveYear.total.toLocaleString()}</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Option Year Breakdown */}
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
+              <h3 className="text-sm font-semibold text-slate-700">Option Year Technical Pricing</h3>
+            </div>
+            <table className="w-full text-xs">
+              <thead><tr className="text-slate-500 bg-slate-50"><th className="text-left px-5 py-2.5 font-semibold">Category</th><th className="text-right px-5 py-2.5 font-semibold">Annual Cost</th></tr></thead>
+              <tbody>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 text-slate-700">Labor</td><td className="px-5 py-3 text-right font-semibold text-slate-700">${projectBudget.optionYear.labor.toLocaleString()}</td></tr>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 text-slate-700">Infrastructure</td><td className="px-5 py-3 text-right font-semibold text-slate-700">${projectBudget.optionYear.infrastructure.toLocaleString()}</td></tr>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 text-slate-700">Security</td><td className="px-5 py-3 text-right font-semibold text-slate-700">${projectBudget.optionYear.security.toLocaleString()}</td></tr>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 text-slate-700">Training</td><td className="px-5 py-3 text-right font-semibold text-slate-700">${projectBudget.optionYear.training.toLocaleString()}</td></tr>
+                <tr className="border-t border-slate-100 hover:bg-slate-50"><td className="px-5 py-3 text-slate-700">Sustainment Margin</td><td className="px-5 py-3 text-right font-semibold text-slate-700">${projectBudget.optionYear.sustainmentMargin.toLocaleString()}</td></tr>
+                <tr className="bg-slate-50 border-t-2 border-slate-200"><td className="px-5 py-3 font-bold text-slate-700">OPTION YEAR PRICE</td><td className="px-5 py-3 text-right font-bold text-slate-800">${projectBudget.optionYear.total.toLocaleString()}</td></tr>
+              </tbody>
+            </table>
           </div>
 
           {/* Labor burn chart */}
@@ -709,12 +775,11 @@ export default function ProjectManagement() {
             <h3 className="text-sm font-semibold text-slate-700 mb-4">Critical Dependency Chains</h3>
             <div className="space-y-4">
               {[
-                { name: 'Database → API → Frontend', chain: ['T1.1', 'T1.6', 'T2.4', 'T2.5'], desc: 'Core data path: schema design feeds migration framework, which enables API endpoints, which frontend consumes.' },
-                { name: 'Auth → SSO → MFA', chain: ['T1.3', 'T2.1', 'T2.2', 'T2.6'], desc: 'Authentication chain: API server needed for auth system, then SSO integration, then MFA enforcement.' },
-                { name: 'Airflow → Pipelines → Backfill → Quality', chain: ['T1.9', 'T3.1', 'T3.2', 'T3.3', 'T3.5', 'T3.6'], desc: 'Data ingestion chain: infrastructure → orchestration → download → transform → quality checks → historical load.' },
-                { name: 'Data → HHI → Fare Model → Divestiture', chain: ['T3.6', 'T4.3', 'T8.1', 'T8.2', 'T8.3'], desc: 'Merger analysis chain: needs historical data loaded before HHI calculation, which feeds fare model, which enables divestiture builder.' },
-                { name: 'LLM → RAG → NL-SQL → Charts', chain: ['T7.1', 'T7.2', 'T7.3', 'T7.4'], desc: 'AI chain: LLM access needed before RAG pipeline, which feeds NL-to-SQL engine, which generates auto-charts.' },
-                { name: 'Security → FedRAMP → Production', chain: ['T9.3', 'T9.4', 'T9.5', 'T10.5'], desc: 'Compliance chain: pen test → hardening → SSP documentation → production deployment. FedRAMP ATO can delay launch.' },
+                { name: 'Cloud → Database → Pipelines → Backfill → Quality', chain: ['T1.1', 'T1.2', 'T2.1', 'T2.4', 'T2.5'], desc: 'Core data path: cloud infra → database → ETL pipelines → historical backfill → quality validation. AI accelerates each step.' },
+                { name: 'API → Market Analytics → Frontend Integration', chain: ['T1.3', 'T3.1', 'T3.3'], desc: 'Analytics delivery: API scaffold → market analytics endpoints → frontend live data integration replacing dummy data.' },
+                { name: 'Data → AI/LLM → Anomaly Detection → Reports', chain: ['T3.1', 'T4.1', 'T4.2', 'T4.4'], desc: 'AI augmentation chain: market data needed before LLM integration, which enables anomaly detection and AI-assisted report preparation.' },
+                { name: 'Security → Training → Transition → UAT → Production', chain: ['T1.4', 'T6.1', 'T6.2', 'T6.3', 'T7.1', 'T7.3'], desc: 'Delivery chain: security baseline → hardening → training materials → transition support → UAT → production deployment.' },
+                { name: 'Regulatory → Export → Role-Based Access', chain: ['T3.4', 'T5.1', 'T5.2', 'T5.3'], desc: 'Regulatory workflow: competitive evaluation → regulatory tools → exportable datasets → secure access controls.' },
               ].map((chain, i) => (
                 <div key={i} className="border border-slate-100 rounded-lg p-4">
                   <h4 className="text-xs font-bold text-slate-700 mb-1">{chain.name}</h4>
