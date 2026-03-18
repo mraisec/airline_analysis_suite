@@ -76,7 +76,7 @@ export default function Login() {
             </h2>
             <p className="text-slate-300 text-lg leading-relaxed mb-8">
               Comprehensive aviation data analytics platform for the
-              U.S. Department of Transportation — Office of Aviation Analysis.
+              U.S. Department of Transportation - Office of Aviation Analysis.
             </p>
 
             <div className="space-y-4">
