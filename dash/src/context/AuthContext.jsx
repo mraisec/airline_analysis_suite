@@ -82,7 +82,7 @@ export function AuthProvider({ children }) {
   const login = (email, password) => {
     setError('');
     const found = USERS.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+      (u) => u.email.toLowerCase().trim() === email.toLowerCase().trim() && u.password === password.trim()
     );
     if (found) {
       const { password: _, ...safeUser } = found;

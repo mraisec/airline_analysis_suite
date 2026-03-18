@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Plane, Lock, Mail, Eye, EyeOff, ShieldCheck, ChevronRight } from 'lucide-react';
@@ -13,9 +13,13 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showDemo, setShowDemo] = useState(false);
-  const { login, error } = useAuth();
+  const [showDemo, setShowDemo] = useState(true);
+  const { login, error, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate('/', { replace: true });
+  }, [user, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
